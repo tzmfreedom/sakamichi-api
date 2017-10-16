@@ -10,8 +10,8 @@ ifeq ($(shell command -v heroku 2>/dev/null),)
 	brew install heroku
 endif
 
-.PHONY: heroku/deploy
-heroku/deploy: heroku
+.PHONY: deploy
+deploy: heroku
 	git push heroku master
 
 .PHONY: heroku/create
@@ -23,6 +23,10 @@ heroku/console: heroku
 	heroku run bash
 
 .PHONY: heroku/logs
-heroku/logs: heroku
+logs: heroku
 	heroku logs
+
+.PHONY: open
+open: heroku
+	heroku open
 
