@@ -11,7 +11,11 @@ ifeq ($(shell command -v heroku 2>/dev/null),)
 endif
 
 .PHONY: deploy
-deploy: heroku
+deploy:
+	bundle exec cap production deploy
+
+.PHONY: heroku/deploy
+heroku/deploy: heroku
 	git push heroku master
 
 .PHONY: heroku/create
