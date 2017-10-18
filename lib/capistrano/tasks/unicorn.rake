@@ -5,9 +5,10 @@ namespace :unicorn do
         if test("[ -e #{pidfile} ] && kill -0 #{pid}")
           info "unicorn is runnning with pid: #{pid}"
         else
+          execute :mkdir, "-p #{current_path}/tmp/pids"
           with rails_env: fetch(:rails_env) do
             unicorn_rack_env = fetch(:rails_env) == "development" ? "development" : "deployment"
-            execute :bundle, "exec unicorn -c #{} -E #{unicorn_rack_env}"
+            execute :bundle, "exec unicorn -c #{config_path} -E #{unicorn_rack_env}"
           end
         end
       end

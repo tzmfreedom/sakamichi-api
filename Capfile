@@ -6,13 +6,16 @@ require "capistrano/deploy"
 
 require "capistrano/rbenv"
 # require "capistrano/chruby"
-# require "capistrano/bundler"
+require "capistrano/bundler"
 # require "capistrano/rails/assets"
 require "capistrano/rails/migrations"
 # require "capistrano/passenger"
 
-require 'capistrano/bundle_rsync/plugin'
-install_plugin Capistrano::BundleRsync::Plugin
+# require 'capistrano/bundle_rsync/plugin'
+# install_plugin Capistrano::BundleRsync::Plugin
+
+require "capistrano/scm/git"
+install_plugin Capistrano::SCM::Git
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
 Dir.glob("lib/capistrano/tasks/*.rake").each { |r| import r }

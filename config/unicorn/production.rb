@@ -1,6 +1,6 @@
 listen 5000
 worker_processes 1
-pid File.expand_path("../../tmp/pids/unicorn.pid", __FILE__)
+pid File.expand_path("../../../tmp/pids/unicorn.pid", __FILE__)
 timeout 10
 
 stderr_path "/var/log/sakamichi-api/unicorn_stderr.log"
