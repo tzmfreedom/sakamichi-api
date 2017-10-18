@@ -37,3 +37,13 @@ set :keep_releases, 5
 
 set :rbenv_type, :user # or :system, depends on your rbenv setup
 set :rbenv_ruby, File.read('.ruby-version').strip
+
+set :unicorn_roles, %w(app)
+
+namespace :deploy do
+  task :restart do
+    invoke 'unicorn:restart'
+  end
+end
+
+after 'deploy:publishing', 'deploy:restart'
