@@ -21,3 +21,7 @@
 .idea/
 vendor/
 .local_repo/
+
+
+# Ignore application configuration
+/config/application.yml
