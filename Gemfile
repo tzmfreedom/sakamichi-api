@@ -37,6 +37,8 @@ group :development do
   gem 'capistrano'
   gem 'capistrano-rails'
   gem 'capistrano-rbenv'
+  gem 'pry'
+  gem 'pry-byebug'
   # gem 'capistrano-bundle_rsync'
 end
 
