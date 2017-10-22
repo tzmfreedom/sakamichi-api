@@ -12,6 +12,7 @@ endif
 
 .PHONY: deploy
 deploy:
+	git push origin master
 	bundle exec cap production deploy
 
 .PHONY: heroku/deploy

@@ -1,7 +1,7 @@
 module Api
   module Keyakizaka
     class MembersController < ApplicationController
-      include Swagger::Blocks
+      include ::Swagger::Blocks
 
       swagger_path '/keyakizaka/members' do
         operation :get do

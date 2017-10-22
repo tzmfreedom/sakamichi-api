@@ -1,7 +1,7 @@
 module Api
   module HiraganaKeyaki
     class MembersController < ApplicationController
-      include Swagger::Blocks
+      include ::Swagger::Blocks
 
       swagger_path '/hiragana_keyaki/members' do
         operation :get do

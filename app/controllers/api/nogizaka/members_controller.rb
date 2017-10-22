@@ -1,7 +1,7 @@
 module Api
   module Nogizaka
     class MembersController < ApplicationController
-      include Swagger::Blocks
+      include ::Swagger::Blocks
 
       swagger_path '/nogizaka/members' do
         operation :get do
