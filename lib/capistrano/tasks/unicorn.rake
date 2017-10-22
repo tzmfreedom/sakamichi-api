@@ -24,7 +24,7 @@ namespace :unicorn do
   end
 
   def start_unicorn
-    execute :mkdir, "-p #{File.basename(fetch(:unicorn_pid_path))}"
+    execute :mkdir, "-p #{File.dirname(fetch(:unicorn_pid_path))}"
     unicorn_rack_env = fetch(:rails_env) == 'development' ? 'development' : 'deployment'
     execute :bundle, "exec unicorn -c #{fetch(:unicorn_config_path)} -E #{unicorn_rack_env} -D"
   end
