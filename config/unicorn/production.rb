@@ -1,5 +1,5 @@
 listen 3000
-worker_processes 1
+worker_processes 4
 pid File.expand_path("../../../tmp/pids/unicorn.pid", __FILE__)
 timeout 10
 
