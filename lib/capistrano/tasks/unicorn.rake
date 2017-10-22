@@ -1,15 +1,54 @@
+namespace :load do
+  task :defaults do
+    set :unicorn_pid_path, -> { File.join(current_path, 'tmp', 'pids', 'unicorn.pid') }
+    set :unicorn_config_path, -> { File.join(current_path, 'config', 'unicorn', "#{fetch(:rails_env)}.rb") }
+    set :unicorn_roles, -> { :app }
+  end
+end
+
 namespace :unicorn do
+  def pid
+    "`cat #{fetch(:unicorn_pid_path)}`"
+  end
+
+  def pidfile_exists?
+    File.exists?(fetch(:unicorn_pid_path))
+  end
+
+  def remove_pidfile
+    execute :rm, fetch(:unicorn_pid_path)
+  end
+
+  def unicorn_running?
+    test("kill -0 #{pid}")
+  end
+
+  def start_unicorn
+    execute :mkdir, "-p #{File.basename(fetch(:unicorn_pid_path))}"
+    unicorn_rack_env = fetch(:rails_env) == 'development' ? 'development' : 'deployment'
+    execute :bundle, "exec unicorn -c #{fetch(:unicorn_config_path)} -E #{unicorn_rack_env} -D"
+  end
+
+  def stop_unicorn
+    execute :kill, "-QUIT #{pid}"
+  end
+
+  def reload_unicorn
+    execute :kill, "-HUP #{pid}"
+  end
+
+  def restart_unicorn
+    execute :kill, "-USR2 #{pid}"
+  end
+
   task :start  do
     on roles(fetch(:unicorn_roles)) do
       within current_path do
-        if test("[ -e #{pidfile} ] && kill -0 #{pid}")
+        if pidfile_exists? && unicorn_running?
           info "unicorn is runnning with pid: #{pid}"
         else
-          execute :mkdir, "-p #{current_path}/tmp/pids"
-          with rails_env: fetch(:rails_env) do
-            unicorn_rack_env = fetch(:rails_env) == "development" ? "development" : "deployment"
-            execute :bundle, "exec unicorn -c #{config_path} -E #{unicorn_rack_env} -D"
-          end
+          remove_pidfile if pidfile_exists?
+          start_unicorn
         end
       end
     end
@@ -18,14 +57,10 @@ namespace :unicorn do
   task :stop do
     on roles(fetch(:unicorn_roles)) do
       within current_path do
-        if test("[ -e #{pidfile} ]")
-          if test("kill -0 #{pid}")
-            execute :kill, "-QUIT #{pid}"
-          else
-            execute :rm, pidfile
-          end
+        if pidfile_exists?
+          unicorn_running? ? stop_unicorn : remove_pidfile
         else
-          info "unicorn is not runnning"
+          info 'unicorn is not runnning'
         end
       end
     end
@@ -34,10 +69,11 @@ namespace :unicorn do
   task :reload do
     on roles(fetch(:unicorn_roles)) do
       within current_path do
-        if test("[ -e #{pidfile} ] && kill -0 #{pid}")
-          execute :kill, "-HUP #{pid}"
+        if pidfile_exists? && unicorn_running?
+          reload_unicorn
         else
-          info "unicorn is not runnning"
+          remove_pidfile if pidfile_exists?
+          info 'unicorn is not runnning'
         end
       end
     end
@@ -46,9 +82,9 @@ namespace :unicorn do
   task :restart do
     on roles(fetch(:unicorn_roles)) do
       within current_path do
-        if test("[ -e #{pidfile} ]")
-          if test("kill -0 #{pid}")
-            execute :kill, "-USR2 #{pid}"
+        if pidfile_exists?
+          if unicorn_running?
+            restart_unicorn
           else
             execute :rm, pidfile
             invoke 'unicorn:start'
@@ -59,16 +95,4 @@ namespace :unicorn do
       end
     end
   end
-end
-
-def pidfile
-  File.join(current_path, "tmp", "pids", "unicorn.pid")
-end
-
-def pid
-  "`cat #{pidfile}`"
-end
-
-def config_path
-  File.join(current_path, "config", "unicorn", "#{fetch(:rails_env)}.rb")
 end
