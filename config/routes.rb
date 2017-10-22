@@ -6,5 +6,7 @@ Rails.application.routes.draw do
         resources :songs, only: [:index]
       end
     end
+
   end
+  resources :apidocs, only: [:index]
 end

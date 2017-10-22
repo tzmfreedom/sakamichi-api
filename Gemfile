@@ -23,6 +23,7 @@ gem 'puma', '~> 3.7'
 gem 'rack-cors'
 gem 'unicorn'
 gem 'figaro'
+gem 'swagger-blocks'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
