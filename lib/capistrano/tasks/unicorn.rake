@@ -12,7 +12,7 @@ namespace :unicorn do
   end
 
   def pidfile_exists?
-    File.exists?(fetch(:unicorn_pid_path))
+    test("[ -e #{fetch(:unicorn_pid_path)} ]")
   end
 
   def remove_pidfile
@@ -45,7 +45,7 @@ namespace :unicorn do
     on roles(fetch(:unicorn_roles)) do
       within current_path do
         if pidfile_exists? && unicorn_running?
-          info "unicorn is runnning with pid: #{pid}"
+          info "unicorn is runnning"
         else
           remove_pidfile if pidfile_exists?
           start_unicorn
